@@ -1,0 +1,27 @@
+- name: Update EC2 tags
+  hosts: localhost
+  vars_files:
+    - aws_creds.yaml
+  gather_facts: False
+  environment:
+    AWS_ACCESS_KEY: "{{ aws_access_key }}"
+    AWS_SECRET_KEY: "{{ aws_secret_key }}"
+  vars:
+    ansible_python_interpreter: /usr/bin/python3.9
+    instances_to_update:
+      - id: i-015ac05e9d9dd9c03
+        tags:
+          Name: ansible-slv01
+          Environment: prod
+      - id: i-0123456789abcdef0
+        tags:
+          Name: ansible-slv02
+          Environment: dev
+  tasks:
+    - name: Update EC2 tags
+      ec2_tag:
+        region: ap-south-1
+        resource: "{{ item.id }}"
+        state: present
+        tags: "{{ item.tags }}"
+      loop: "{{ instances_to_update }}"

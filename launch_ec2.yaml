@@ -1,0 +1,24 @@
+---
+ - name: create an EC2 instance using Ansible
+   hosts: localhost
+   vars_files:
+    - aws_creds.yaml
+   gather_facts: false
+   environment:
+    AWS_ACCESS_KEY: "{{ aws_access_key }}"
+    AWS_SECRET_KEY: "{{ aws_secret_key }}"
+   vars:
+    ansible_python_interpreter: /usr/bin/python3.9
+   tasks:
+    - name: launching an EC2 instance
+      amazon.aws.ec2_instance:
+       instance_type: t2.micro
+       image_id: ami-008b85aa3ff5c1b02
+       count: 2
+       region: ap-south-1
+       security_group: WebandSSH
+       key_name: kyeap
+       tags:
+        Name: Ans-host
+        Env: Dev
+
